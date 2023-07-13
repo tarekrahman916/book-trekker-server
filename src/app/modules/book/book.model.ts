@@ -20,7 +20,6 @@ const BookSchema = new Schema(
     },
     reviews: {
       type: [String],
-      required: true,
     },
   },
   {

@@ -1,6 +1,8 @@
 import cors from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
+import globalErrorHandler from "./app/middlewares/globalErrorHandler";
+import router from "./app/routes";
 const app: Application = express();
 
 app.use(cors());
@@ -11,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(cookieParser());
 
 // Application routes
-// app.use("/api/v1", router);
+app.use("/api/v1", router);
 
 // Testing
 app.get("/", async (req: Request, res: Response) => {
@@ -19,7 +21,7 @@ app.get("/", async (req: Request, res: Response) => {
 });
 
 // Global error handler
-// app.use(globalErrorHandler);
+app.use(globalErrorHandler);
 
 // // Handle Not found Route
 app.use((req: Request, res: Response, next: NextFunction) => {
