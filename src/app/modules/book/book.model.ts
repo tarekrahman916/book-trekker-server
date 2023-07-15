@@ -1,10 +1,14 @@
 import { Schema, model } from "mongoose";
+import { BookModel, IBook } from "./book.interface";
 
-const BookSchema = new Schema(
+const BookSchema = new Schema<IBook, BookModel>(
   {
     title: {
       type: String,
       required: true,
+    },
+    description: {
+      type: String,
     },
     author: {
       type: String,
@@ -16,6 +20,10 @@ const BookSchema = new Schema(
     },
     publicationDate: {
       type: Date,
+      required: true,
+    },
+    userEmail: {
+      type: String,
       required: true,
     },
     reviews: {
@@ -30,6 +38,6 @@ const BookSchema = new Schema(
   }
 );
 
-const Book = model("Book", BookSchema);
+const Book = model<IBook, BookModel>("Book", BookSchema);
 
 export default Book;
