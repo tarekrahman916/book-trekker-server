@@ -9,8 +9,13 @@ const getAllBook = async () => {
   const result = await Book.find();
   return result;
 };
+const getSingleBook = async (id: string): Promise<IBook | null> => {
+  const result = await Book.findOne({ _id: id });
+  return result;
+};
 
 export const BookService = {
   createBook,
   getAllBook,
+  getSingleBook,
 };
