@@ -80,6 +80,23 @@ const deleteBook = async (id: string): Promise<IBook | null> => {
   const result = await Book.findByIdAndDelete({ _id: id });
   return result;
 };
+const createReview = async (
+  id: string,
+  review: string
+): Promise<IBook | null> => {
+  const book = await Book.findById({ _id: id });
+
+  if (!book) {
+    throw new Error("Book not found!");
+  }
+
+  const result = await Book.findByIdAndUpdate(
+    { _id: id },
+    { $push: { reviews: review } },
+    { new: true }
+  );
+  return result;
+};
 
 export const BookService = {
   createBook,
@@ -87,4 +104,5 @@ export const BookService = {
   getSingleBook,
   updateBook,
   deleteBook,
+  createReview,
 };
