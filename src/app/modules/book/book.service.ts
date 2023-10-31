@@ -12,7 +12,7 @@ const createBook = async (payload: IBook) => {
 const getAllBook = async (
   filters: IBookFilters,
   paginationOptions: IPaginationOptions
-): Promise<IBook[]> => {
+): Promise<IBook[] | any> => {
   const { searchTerm, ...filtersData } = filters;
   const andConditions: any[] = [];
 
@@ -35,9 +35,7 @@ const getAllBook = async (
     });
   }
 
-  // const { sortBy, sortOrder, limit } = paginationOptions;
-
-  const { limit, sortBy, sortOrder } =
+  const { limit, sortBy, sortOrder, page, skip } =
     paginationHelpers.calculatePagination(paginationOptions);
 
   const sortConditions: { [key: string]: SortOrder } = {};
@@ -51,11 +49,35 @@ const getAllBook = async (
 
   const result = await Book.find(whereCondition)
     .sort(sortConditions)
-    .limit(limit as number);
-  return result;
+    .limit(limit as number)
+    .skip(skip)
+    .limit(limit);
+
+  const total = await Book.countDocuments();
+
+  return {
+    meta: {
+      total,
+      page,
+    },
+    data: result,
+  };
 };
 const getSingleBook = async (id: string): Promise<IBook | null> => {
   const result = await Book.findOne({ _id: id });
+  return result;
+};
+const updateBook = async (
+  id: string,
+  payload: Partial<IBook>
+): Promise<IBook | null> => {
+  const result = await Book.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
+  return result;
+};
+const deleteBook = async (id: string): Promise<IBook | null> => {
+  const result = await Book.findByIdAndDelete({ _id: id });
   return result;
 };
 
@@ -63,4 +85,6 @@ export const BookService = {
   createBook,
   getAllBook,
   getSingleBook,
+  updateBook,
+  deleteBook,
 };

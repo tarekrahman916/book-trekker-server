@@ -20,14 +20,21 @@ const createBook = catchAsync(async (req: Request, res: Response) => {
 });
 const getAllBook = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, booksFilterableFields);
-  const paginationOptions = pick(req.query, ["sortBy", "sortOrder", "limit"]);
+  const paginationOptions = pick(req.query, [
+    "sortBy",
+    "sortOrder",
+    "limit",
+    "page",
+  ]);
+
   const result = await BookService.getAllBook(filters, paginationOptions);
 
   sendResponse<IBook[]>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Books retrieved successfully",
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 const getSingleBook = catchAsync(async (req: Request, res: Response) => {
@@ -41,9 +48,35 @@ const getSingleBook = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const updateBook = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const payload = req.body;
+  const result = await BookService.updateBook(id as string, payload);
+
+  sendResponse<IBook>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Book updated successfully",
+    data: result,
+  });
+});
+const deleteBook = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const result = await BookService.deleteBook(id as string);
+
+  sendResponse<IBook>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Book deleted successfully",
+    data: result,
+  });
+});
 
 export const BookController = {
   createBook,
   getAllBook,
   getSingleBook,
+  updateBook,
+  deleteBook,
 };
